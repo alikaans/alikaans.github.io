@@ -1,0 +1,16 @@
+body {
+    font-style: italic;
+}
+
+  body {
+    background-image: url("l.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 114% 111%;
+  }
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
