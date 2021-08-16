@@ -6,7 +6,7 @@ body {
     background-image: url("l.png");
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-size: 114% 111%;
+    background-size: 111% 114%;
   }
   .container {
     display: flex;
