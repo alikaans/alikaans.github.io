@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOĞUM GÜNÜN KUTLU OLSUN SEVGİLİM 💗</title>
+<style>
+  html, body {
+    margin:0; padding:0; overflow:hidden;
+    font-family: 'Segoe UI', sans-serif;
+    background:#ff77bc;
+    color:white;
+    height:100vh;
+    background-image: url("background.png"); /* Varsa kalır, yoksa düz renk */
+    background-repeat: repeat;
+  }
+
+  #welcome {
+    position:fixed; top:0; left:0; width:100vw; height:100vh;
+    display:flex; justify-content:center; align-items:center; flex-direction:column;
+    text-align:center; background: rgba(10,22,37,0.92); z-index:10;
+    transition: opacity 0.8s ease;
+  }
+  #welcome h1 {font-size: clamp(36px, 8vw, 60px); margin:0;}
+  #welcome p {margin-top:30px; font-size: clamp(18px, 4vw, 24px); animation:bounce 1.5s infinite;}
+  @keyframes bounce {0%,100%{transform:translateY(0);}50%{transform:translateY(10px);}}
+
+  #slides {position:relative; width:100vw; height:100vh; overflow:hidden;}
+
+  .slide {
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    display:flex; flex-direction:row;
+    opacity:0; pointer-events:none;
+    transition: opacity 0.7s ease;
+  }
+  .slide.active { opacity:1; pointer-events:auto; z-index:2; }
+
+  .left {
+    width:50%; background:size cover; background-repeat:no-repeat;
+    background-position:center; filter:brightness(0.75);
+  }
+  .right {
+    width:50%; display:flex; justify-content:center; align-items:center; padding:40px;
+  }
+  .card {
+    background:#ffffff; color:#333; padding:40px; max-width:80%;
+    border-radius:24px; box-shadow:0 15px 50px rgba(0,0,0,0.25);
+    font-size: clamp(16px, 2.5vw, 20px); line-height:1.6;
+  }
+
+  .dots {
+    position:fixed; right:30px; top:50%; transform:translateY(-50%);
+    flex-direction:column; gap:14px; z-index:5;
+  }
+  @media (max-width: 768px) {
+    .dots { flex-direction:row; bottom:30px; top:auto; left:50%; transform:translateX(-50%); }
+    .slide { flex-direction:column; }
+    .left, .right { width:100%; height:50%; }
+    .right { padding:30px; }
+  }
+  .dot {width:12px; height:12px; background:#ea9999; border-radius:50%; transition:all .3s;}
+  .dot.active {background:#fff; transform:scale(1.4); box-shadow:0 0 10px rgba(255,255,255,0.6);}
+</style>
+</head>
+<body>
+
+<div id="welcome">
+  <h1>Doğum Günün Kutlu Olsun Sevgilim 💕</h1>
+  <p>Aşağı kaydırarak sürprizini keşfet ↓</p>
+</div>
+
+<div id="slides"></div>
+<div class="dots" id="dots"></div>
+
+<script>
+const images = [
+  "beren.jpeg",        // Resimleri online bir yere yüklemeni öneririm (Imgur vs.)
+  "bilge.jpeg",
+  "berke.jpg",
+  "https://picsum.photos/1900/1300?random=4" // Placeholder, kendi resmini koy
+];
+
+const texts = [
+  "İYİKİ DOĞDUN GÜZELLİKK 💖 Legal olmamak seni durduramadı zaten ama artık gönül rahatlığıyla her yere gidebilirsin 🥳🥳 Doğum gününün aralığa denk gelmesi imrenilecek bir şey... Yeni yılla birlikte yeni yaşınla her şeye baştan başlayabilirsin. Bu yıl hiç görmediğin bir tarafının kilidi açılır umarım. Seni çook seviyorum, yıllar geçse de hep ilk günkü gibi neşeli, cıvıl cıvıl ve eğlenceli kal elom 💗 Yeni yaşın kutlu olsun!",
+  "Elif doğum günün kutlu olsun! Seni çok çok seviyorum. Tanıştığımız günden beri hep harika bir arkadaş ve müthiş bir insan oldun. Seninle geçirdiğimiz her an o kadar güzeldi ki... Edindiğimiz anılar, konuştuğumuz onca şey kalbimde kocaman bir yer kaplıyor. 18 mi oldun şimdi? 🥹 İyi ki tanışmışız, arkadaş olmuşuz, lisede beraber büyümüşüz 🫶🏻 Umarım her yaşında bu kadar neşeli, eğlenceli ve hayat dolu kalırsın 💞",
+  "Bazen bir fok balığı kadar şaşkın 🦭, bazen dünyanın en tatlı insanı... Her halinle iyi ki arkadaşımsın. Birlikte saçmaladığımız nice senelere! 🥳",
+  "Ve işte son sürpriz... Seni gördüğüm her an zaten benim için en güzel hediye. Yeni yaşında da yanında olacağım, her zaman. Seni çok seviyorum, iyi ki varsın! ❤️🎂"
+];
+
+let current = -1;
+let canNavigate = true;
+let startY = 0;
+
+const slidesContainer = document.getElementById("slides");
+const dotsContainer = document.getElementById("dots");
+const welcome = document.getElementById("welcome");
+
+// Slayt ve dot oluştur
+images.forEach((img, i) => {
+  const slide = document.createElement("div");
+  slide.className = "slide";
+  slide.innerHTML = `
+    <div class="left" style="background-image:url('${img}')"></div>
+    <div class="right"><div class="card">${texts[i]}</div></div>
+  `;
+  slidesContainer.appendChild(slide);
+
+  const dot = document.createElement("div");
+  dot.className = "dot";
+  dot.addEventListener("click", () => goToSlide(i));
+  dotsContainer.appendChild(dot);
+});
+
+const slides = document.querySelectorAll(".slide");
+const dots = document.querySelectorAll(".dot");
+
+// Preload images
+images.forEach(src => {
+  if (src.startsWith("http")) {
+    const img = new Image();
+    img.src = src;
+  }
+});
+
+function activateSlide(index) {
+  slides.forEach((s, i) => s.classList.toggle("active", i === index));
+  dots.forEach((d, i) => d.classList.toggle("active", i === index));
+}
+
+function goToSlide(index) {
+  if (!canNavigate || index === current) return;
+  canNavigate = false;
+
+  if (current === -1) {
+    welcome.style.opacity = 0;
+    setTimeout(() => welcome.style.display = "none", 800);
+  }
+
+  current = index;
+  activateSlide(current);
+
+  setTimeout(() => canNavigate = true, 800);
+}
+
+// Wheel
+window.addEventListener("wheel", e => {
+  if (!canNavigate) return;
+  if (current === -1 && e.deltaY > 0) goToSlide(0);
+  else if (e.deltaY > 0 && current < slides.length - 1) goToSlide(current + 1);
+  else if (e.deltaY < 0 && current > 0) goToSlide(current - 1);
+});
+
+// Touch events
+window.addEventListener("touchstart", e => startY = e.touches[0].clientY);
+window.addEventListener("touchend", e => {
+  if (!canNavigate) return;
+  const endY = e.changedTouches[0].clientY;
+  const diff = startY - endY;
+  if (Math.abs(diff) > 50) {
+    if (diff > 0 && current < slides.length - 1) goToSlide(current + 1 || 0);
+    else if (diff < 0 && current > 0) goToSlide(current - 1);
+  }
+});
+
+// Keyboard
+window.addEventListener("keydown", e => {
+  if (!canNavigate) return;
+  if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+    if (current === -1) goToSlide(0);
+    else if (current < slides.length - 1) goToSlide(current + 1);
+  } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+    if (current > 0) goToSlide(current - 1);
+  }
+});
+</script>
+</body>
+</html>
