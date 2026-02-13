@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aşk Yolculuğumuz 💕</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 50%, #e1f5fe 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .canvas-wrapper {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      padding: 24px;
+    }
+
+    canvas {
+      border: 4px solid #f48fb1;
+      border-radius: 16px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+      background: linear-gradient(180deg, #fce4ec 0%, #f3e5f5 100%);
+      display: block;
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes zoomIn {
+      from { 
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to { 
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal {
+      background: linear-gradient(135deg, #fce4ec 0%, #ffffff 50%, #f3e5f5 100%);
+      border-radius: 24px;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 100%;
+      padding: 40px;
+      position: relative;
+      border: 4px solid #f8bbd0;
+      animation: zoomIn 0.3s ease;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #ec407a;
+      color: white;
+      border: none;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      background: #d81b60;
+      transform: scale(1.05);
+    }
+
+    .modal-heart {
+      text-align: center;
+      font-size: 3rem;
+      margin-bottom: 20px;
+      animation: pulse 1.5s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .modal-title {
+      font-size: 2rem;
+      font-weight: bold;
+      text-align: center;
+      color: #6a1b9a;
+      margin-bottom: 20px;
+    }
+
+    .modal-image {
+      margin-bottom: 24px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      border: 4px solid #f8bbd0;
+    }
+
+    .modal-image img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .modal-story {
+      font-size: 1.1rem;
+      color: #7b1fa2;
+      text-align: center;
+      line-height: 1.8;
+      font-style: italic;
+    }
+
+    .modal-hearts {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      font-size: 1.2rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .victory-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(236, 64, 122, 0.95) 0%, rgba(171, 71, 188, 0.95) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .victory-content {
+      text-align: center;
+      color: white;
+      padding: 40px;
+    }
+
+    .victory-title {
+      font-size: 4rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      animation: bounce 1s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .victory-message {
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .victory-hearts {
+      font-size: 3rem;
+      animation: pulse 1.5s ease infinite;
+    }
+
+    @media (max-width: 768px) {
+      canvas {
+        width: 100%;
+      }
+      
+      .victory-title {
+        font-size: 2.5rem;
+      }
+      
+      .victory-message {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="canvas-wrapper">
+      <canvas id="gameCanvas" width="800" height="600"></canvas>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="close-btn" id="closeBtn">×</button>
+      <div class="modal-heart">❤️</div>
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <div class="modal-image">
+        <img id="modalImage" src="" alt="">
+      </div>
+      <p class="modal-story" id="modalStory"></p>
+      <div class="modal-hearts">
+        <span style="color: #f48fb1;">❤️</span>
+        <span style="color: #ec407a;">❤️</span>
+        <span style="color: #f48fb1;">❤️</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Victory Screen -->
+  <div id="victoryScreen" class="victory-overlay hidden">
+    <div class="victory-content">
+      <div class="victory-title">🎉 KAZANDINIZ! 🎉</div>
+      <div class="victory-message">Tüm anıları topladınız!</div>
+      <div class="victory-hearts">❤️ 💕 ❤️ 💕 ❤️</div>
+    </div>
+  </div>
+
+  <script>
+    // Oyun verileri
+    const memories = [
+      {
+           id: 1,
+        photo: "1.jpeg",
+        story: "Hem birlikte olan ilk fotoğrafımız hem de sevgili olduğumuz günün fotoğrafı. Hayatımın sonuna kadar bu günü hiçbir zaman unutmayacağım. ❤️",
+        title: "İlk Fotomuz"
+      },
+      {
+        id: 2,
+        photo: "2.jpeg",
+        story: "Bana bu gün kağıda kalp çizip vermiştin. O kalp hala benimle birlikte arada telefonumun arkasından çıkarıp bakıyorum ve ne kadar şanslı olduğum ve yaşadığımız her şey tekrar gözlerimin önünde canlanıyor. ❤️",
+        title: "Kütüphanede Kağıt Kalp"
+      },
+      {
+        id: 3,
+        photo: "3.jpeg",
+        story: "Bu gün sana ilk kez bi çiçek koparıp vermiştim çok kitabın arasına sıkıştırıp kurutucam demiştin. O gülü koparıp sana verdiğimde ilk ve son olmayacağını anlamıştım. ❤️",
+        title: "İlk Çiçek?"
+      },
+      {
+        id: 4,
+        photo: "4.jpeg",
+        story: "Benim bu hayatım boyunca gittiğim ilk konserdi. İlk konserime seninle birlikte gittiğim için çok mutluyum. ❤️",
+        title: "İlk Konserimiz"
+      },
+      {
+        id: 5,
+        photo: "5.jpeg",
+        story: "Bu gün ordaki direklere maymun gibi tırmanmıştım. İşte o zaman gerçekten senin yanında kendim olabildiğimi utanmadığımı farkettim. ❤️",
+        title: "Maymunluk"
+      },
+      {
+        id: 6,
+        photo: "6.jpeg",
+        story: "Bu gün birlikte gezinmeye çıkmıştık. Okuldan kaçmıştın ve birlikte yol kenarından çilek almıştık. Statünün yanından geçerken papatyaları gördün ve kafama takmak istedin. Harika bi gün geçirmiştim seninle birlikte. ❤️",
+        title: "Papatya Kafa"
+      },
+      {
+        id: 7,
+        photo: "7.jpeg",
+        story: "Ben gençtek için Ankaraya gitmiştim 3-4 gün görüşememiştik ve görüşemediğimiz 3-4 gün o ana kadar buluşamadığımız en uzun süreydi. Döndüğümde saçlarını düzleştirmiştin ve laurende oturmuştuk. ❤️",
+        title: "Düz Saç Ve Uzun(!) Süreli Görüşememe"
+      },
+      {
+        id: 8,
+        photo: "8.jpeg",
+        story: "Birlikte attığımız ilk story buydu. The Smiths'i eklemiştik şarkı olarak.",
+        title: "İlk Story"
+      },
+      {
+        id: 9,
+        photo: "9.jpeg",
+        story: "Arkadaşlarının tenis müsabakasına gitmiştik birlikte. Bu gün arkadaşlarınla tanıştığım ilk gündü. (galiba emin değilim mlsf...)",
+        title: "Arkadaşların"
+      },
+      {
+        id: 10,
+        photo: "10.jpeg",
+        story: "Bu gün benim kaşlarımı almıştın. ÇOK ACIMIŞTI.",
+        title: "Kaş Bakımı..."
+      },
+      {
+        id: 11,
+        photo: "11.jpeg",
+        story: "Sana ilk kez bi çiçek buketi almıştım. Çok güzeldin o mavi elbisende prensesim.",
+        title: "Mezuniyetin"
+      },
+      {
+        id: 12,
+        photo: "12.jpeg",
+        story: "Birlikte dünyanın en ucube tepesine tırmanmıştık çok eğlenmiştim böyle maymun maymun önünden koştururken.",
+        title: "Tırmanış"
+      },
+      {
+        id: 13,
+        photo: "13.jpeg",
+        story: "Elifsu Fatih Sen ve Ben. O kolonya tatlı gini almıştınız inanilmaz kötüydü ama geçirdiğimiz vaikt harikaydı.",
+        title: "Kolonya"
+      },
+      {
+        id: 14,
+        photo: "14.jpeg",
+        story: "YKS sonrası birlikte ilk kez dışarı çıkmıştık. Sonunda sürekli kütüphanede buluşmak zorunda değildik...",
+        title: "After YKS"
+      },
+      {
+        id: 15,
+        photo: "15.jpeg",
+        story: "Kızlarla birlikte dışarıya çıkmıştınız oturuyodunuz. Yanınıza sonra ben gelmiştim birlikte oturmuştuk. Benim favori fotoğraflarımızdan birisi bu.",
+        title: "Aşk Dolu Bakıyon HE"
+      },
+      {
+        id: 16,
+        photo: "16.jpeg",
+        story: "Bu gün gelebildiğin için o kadar mutluyum ki gerçekten böyle gelebileceğini söylediğinde sırıtmaktan yüzüm ağrımıştı. Keşke havuza birlikte atlayabilseydik.",
+        title: "Benim Mezuniyetim"
+      },
+      {
+        id: 17,
+        photo: "17.jpeg",
+        story: "Bu gün birlikte ilk kez İzmire gitmiştik. Elindeki gülü bi çingen abladan almıştık ve bize bi de el falı bakmıştı. Hiçbi zaman ayrılmıcaz bi de ikizlerin olcak...",
+        title: "İzmir"
+      },
+      {
+        id: 18,
+        photo: "18.jpeg",
+        story: "Kendi kafamda harika bi şekilde planlamıştım ama o kadar da iyi uygulayamadım malesef bu günü. Ama çiçeğinle birlikte o kadar güzeldin ki hiçbi şekilde o andan çıkmak istemedim.",
+        title: "Akşam Yemeği"
+      },
+      {
+        id: 19,
+        photo: "19.jpeg",
+        story: "Sen Ankaraya gitmeden önce çekildiğimiz son fotoğraf buydu...",
+        title: "1. Sezon KAPANIŞ"
+      },
+      {
+        id: 20,
+        photo: "20.jpeg",
+        story: "İlk kez Ankarada birlikte çekildiğimiz fotoğraf. Trenden indiğim gibi çekinmiştik. O kadar özlemiştim ki seni.",
+        title: "2. Sezon BAŞLANGIÇ"
+      },
+      {
+        id: 21,
+        photo: "21.jpeg",
+        story: "Ankaraya 2. ziyaretim. Kombinlerimizi çekmeye çalışıyoduk.",
+        title: "Kombini Çekme Çabaları"
+      },
+      {
+        id: 22,
+        photo: "22.jpeg",
+        story: "Bu sefer Manisada buluşmuştuk. Ayağımı ağzına sokmayı deniyodum...",
+        title: "Ayak?"
+      },
+      {
+        id: 23,
+        photo: "23.jpeg",
+        story: "Yine Manisada buluştuk. Burger King söylemiştik bu fotoyu bonibon yiyen fare gifine çok benzetmiştik.",
+        title: "Burger Kral"
+      },
+      {
+        id: 24,
+        photo: "24.jpeg",
+        story: "Ablan sana çiçekli lego almıştı hediye olarak. AVM'de oturup bunu yapmıştık sonrasında da otelde ilk kez birlikte kalıp sarılıp uyumuştuk.",
+        title: "Lego Çiçek Ve Uyku"
+      },
+      {
+        id: 25,
+        photo: "25.jpeg",
+        story: "HARİKA Bİ DENEYİMDİ BÖYLE TUM SURATIM RUJDU MÜKEMMELDİ TEKRARLAYALIM.",
+        title: "Öpücüklü"
+      },
+      {
+        id: 26,
+        photo: "26.jpeg",
+        story: "Galerimdeki en son birlikte çekildiğimiz fotoğraf bu. İzmir metroda çekilmiştik Berkelerin evine gitmiştik yine mükemmel bi gündü.",
+        title: "Son Fotomuz"
+      }
+    ];
+
+    // Oyun değişkenleri
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const modal = document.getElementById('modal');
+    const closeBtn = document.getElementById('closeBtn');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalImage = document.getElementById('modalImage');
+    const modalStory = document.getElementById('modalStory');
+    const victoryScreen = document.getElementById('victoryScreen');
+
+    let isPaused = false;
+    let isCollecting = false;
+    let score = 0;
+    let collectedEnvelopes = [];
+    let gameWon = false;
+
+    const camera = { x: 0, y: 0 };
+    const WORLD_WIDTH = 8000; // 6000'den 8000'e çıkarıldı
+
+    const player = {
+      x: 100,
+      y: 300,
+      width: 30,
+      height: 40,
+      velocityY: 0,
+      velocityX: 0,
+      isJumping: false,
+      walkFrame: 0,
+      walkTimer: 0,
+      direction: 1
+    };
+
+    const gravity = 0.6;
+    const jumpStrength = -13;
+    const moveSpeed = 5;
+    const friction = 0.85;
+    const keys = {};
+
+    // Düzenli platformlar oluştur
+    const platforms = [];
+    const groundY = 520;
+    
+    // Zemin platformu
+    platforms.push({
+      x: 0,
+      y: groundY,
+      width: WORLD_WIDTH,
+      height: 80
+    });
+
+    // Atlama platformları - düzenli aralıklarla (50 platform)
+    for (let i = 0; i < 50; i++) {
+      const x = 200 + i * 200;
+      const baseY = 400;
+      const variation = Math.sin(i * 0.5) * 80;
+      
+      platforms.push({
+        x: x,
+        y: baseY + variation,
+        width: 120,
+        height: 15
+      });
+    }
+
+    // Zarflar - platformların üzerine yerleştir
+    const envelopes = memories.map((memory, index) => {
+      const x = 300 + index * 280;
+      let y = groundY - 80; // Varsayılan olarak zeminin üstü
+      
+      // En yakın platformu bul
+      for (let platform of platforms) {
+        if (x >= platform.x && x <= platform.x + platform.width) {
+          if (platform.y < groundY) {
+            y = platform.y - 60;
+            break;
+          }
+        }
+      }
+      
+      return {
+        id: memory.id,
+        x: x,
+        y: y,
+        width: 40,
+        height: 30,
+        collected: false,
+        float: index * 0.5,
+        memory: memory
+      };
+    });
+
+    // Kalpler
+    const hearts = [];
+    for (let i = 0; i < 60; i++) { // 40'tan 60'a çıkarıldı
+      hearts.push({
+        x: Math.random() * WORLD_WIDTH,
+        y: Math.random() * 400,
+        size: Math.random() * 15 + 10,
+        speed: Math.random() * 0.5 + 0.2,
+        opacity: Math.random() * 0.3 + 0.1
+      });
+    }
+
+    // Event listeners
+    window.addEventListener('keydown', (e) => {
+      keys[e.key] = true;
+      keys[e.key.toLowerCase()] = true;
+      
+      // Boşluk, W, w, ArrowUp ile zıplama
+      if ((e.key === ' ' || e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') && !player.isJumping && !isPaused) {
+        player.velocityY = jumpStrength;
+        player.isJumping = true;
+        e.preventDefault(); // Sayfa kaydırmasını önle
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      keys[e.key] = false;
+      keys[e.key.toLowerCase()] = false;
+    });
+
+    closeBtn.addEventListener('click', () => {
+      modal.classList.add('hidden');
+      isPaused = false;
+      isCollecting = false;
+      
+      // Tüm anılar toplandıysa kazanma ekranını göster
+      if (collectedEnvelopes.length === memories.length && !gameWon) {
+        gameWon = true;
+        setTimeout(() => {
+          victoryScreen.classList.remove('hidden');
+        }, 500);
+      }
+    });
+
+    // Modal gösterme fonksiyonu
+    function showStory(memory) {
+      modalTitle.textContent = memory.title;
+      modalImage.src = memory.photo;
+      modalImage.alt = memory.title;
+      modalStory.textContent = '"' + memory.story + '"';
+      modal.classList.remove('hidden');
+      isPaused = true;
+    }
+
+    // Oyun döngüsü
+    function gameLoop() {
+      if (isPaused || gameWon) {
+        requestAnimationFrame(gameLoop);
+        return;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Arka plan
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, '#FFE5F0');
+      gradient.addColorStop(0.5, '#E8D5F2');
+      gradient.addColorStop(1, '#D5E8F7');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Hareket
+      if (keys['ArrowLeft'] || keys['a']) {
+        player.velocityX = -moveSpeed;
+        player.direction = -1;
+        player.walkTimer = 0.2;
+      } else if (keys['ArrowRight'] || keys['d']) {
+        player.velocityX = moveSpeed;
+        player.direction = 1;
+        player.walkTimer = 0.2;
+      }
+
+      player.velocityY += gravity;
+      player.x += player.velocityX;
+      player.y += player.velocityY;
+      player.velocityX *= friction;
+
+      if (player.walkTimer > 0) {
+        player.walkFrame += 0.3;
+        player.walkTimer -= 0.016;
+      }
+
+      // Platform çarpışması
+      platforms.forEach(platform => {
+        if (player.velocityY > 0 &&
+            player.y + player.height < platform.y + 10 &&
+            player.y + player.height + player.velocityY >= platform.y &&
+            player.x + player.width > platform.x &&
+            player.x < platform.x + platform.width) {
+          player.y = platform.y - player.height;
+          player.velocityY = 0;
+          player.isJumping = false;
+        }
+      });
+
+      // Dünya sınırları
+      if (player.x < 0) player.x = 0;
+      if (player.x > WORLD_WIDTH - player.width) player.x = WORLD_WIDTH - player.width;
+      if (player.y > canvas.height) {
+        player.y = 100;
+        player.x = 100;
+        player.velocityY = 0;
+      }
+
+      // Zarf toplama
+      envelopes.forEach(envelope => {
+        if (!envelope.collected &&
+            player.x < envelope.x + envelope.width &&
+            player.x + player.width > envelope.x &&
+            player.y < envelope.y + envelope.height &&
+            player.y + player.height > envelope.y &&
+            !isCollecting) {
+          
+          // Daha önce toplanmamışsa
+          if (!collectedEnvelopes.includes(envelope.id)) {
+            isCollecting = true;
+            envelope.collected = true;
+            collectedEnvelopes.push(envelope.id);
+            score += 100;
+            showStory(envelope.memory);
+          }
+        }
+      });
+
+      // Kamera
+      camera.x = player.x - canvas.width / 2 + player.width / 2;
+      camera.x = Math.max(0, Math.min(camera.x, WORLD_WIDTH - canvas.width));
+
+      ctx.save();
+      ctx.translate(-camera.x, -camera.y);
+
+      // Kalpler çiz
+      hearts.forEach(heart => {
+        heart.y += heart.speed;
+        if (heart.y > 600) heart.y = -20;
+        
+        ctx.save();
+        ctx.globalAlpha = heart.opacity;
+        ctx.fillStyle = '#FF69B4';
+        ctx.font = `${heart.size}px Arial`;
+        ctx.fillText('❤️', heart.x, heart.y);
+        ctx.restore();
+      });
+
+      // Platformları çiz
+      platforms.forEach(platform => {
+        const platformGradient = ctx.createLinearGradient(0, platform.y, 0, platform.y + platform.height);
+        platformGradient.addColorStop(0, '#FF69B4');
+        platformGradient.addColorStop(1, '#FF1493');
+        ctx.fillStyle = platformGradient;
+        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+        
+        ctx.strokeStyle = '#C71585';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(platform.x, platform.y, platform.width, platform.height);
+      });
+
+      // Zarfları çiz
+      envelopes.forEach(envelope => {
+        envelope.float += 0.05;
+        const floatY = envelope.y + Math.sin(envelope.float) * 5;
+        
+        if (!envelope.collected) {
+          ctx.save();
+          ctx.shadowColor = 'rgba(255, 105, 180, 0.5)';
+          ctx.shadowBlur = 15;
+          
+          ctx.fillStyle = '#FFB6C1';
+          ctx.fillRect(envelope.x, floatY, envelope.width, envelope.height);
+          
+          ctx.fillStyle = '#FF69B4';
+          ctx.beginPath();
+          ctx.moveTo(envelope.x, floatY);
+          ctx.lineTo(envelope.x + envelope.width / 2, floatY + envelope.height / 2);
+          ctx.lineTo(envelope.x + envelope.width, floatY);
+          ctx.fill();
+          
+          ctx.strokeStyle = '#FF1493';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(envelope.x, floatY, envelope.width, envelope.height);
+          
+          ctx.fillStyle = '#8B4789';
+          ctx.font = 'bold 20px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText('💌', envelope.x + envelope.width / 2, floatY - 10);
+          
+          ctx.restore();
+        }
+      });
+
+      // Oyuncuyu çiz
+      ctx.save();
+      if (player.direction === -1) {
+        ctx.translate(player.x + player.width / 2, 0);
+        ctx.scale(-1, 1);
+        ctx.translate(-(player.x + player.width / 2), 0);
+      }
+      
+      // Kıvırcık saçlar (arkada)
+      ctx.fillStyle = '#8B4513';
+      ctx.beginPath();
+      // Sol kıvırcıklar
+      ctx.arc(player.x + player.width / 2 - 10, player.y - 2, 5, 0, Math.PI * 2);
+      ctx.arc(player.x + player.width / 2 - 8, player.y - 6, 4, 0, Math.PI * 2);
+      ctx.arc(player.x + player.width / 2 - 5, player.y - 8, 4, 0, Math.PI * 2);
+      ctx.arc(player.x + player.width / 2 - 2, player.y - 9, 3, 0, Math.PI * 2);
+      // Orta kıvırcıklar
+      ctx.arc(player.x + player.width / 2, player.y - 10, 4, 0, Math.PI * 2);
+      ctx.arc(player.x + player.width / 2 + 2, player.y - 9, 3, 0, Math.PI * 2);
+      // Sağ kıvırcıklar
+      ctx.arc(player.x + player.width / 2 + 5, player.y - 8, 4, 0, Math.PI * 2);
+      ctx.arc(player.x + player.width / 2 + 8, player.y - 6, 4, 0, Math.PI * 2);
+      ctx.arc(player.x + player.width / 2 + 10, player.y - 2, 5, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Kafa
+      ctx.fillStyle = '#FFB6C1';
+      ctx.beginPath();
+      ctx.arc(player.x + player.width / 2, player.y + 5, 12, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.strokeStyle = '#FF69B4';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(player.x + player.width / 2, player.y + 5, 12, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      // Kahkül (önde) - minik kıvırcık saç telleri
+      ctx.fillStyle = '#8B4513';
+      ctx.beginPath();
+      // Sol kahkül
+      ctx.arc(player.x + player.width / 2 - 6, player.y - 4, 3, 0, Math.PI * 2);
+      ctx.arc(player.x + player.width / 2 - 4, player.y - 2, 2.5, 0, Math.PI * 2);
+      // Orta kahkül
+      ctx.arc(player.x + player.width / 2 - 1, player.y - 5, 2.5, 0, Math.PI * 2);
+      ctx.arc(player.x + player.width / 2 + 1, player.y - 5, 2.5, 0, Math.PI * 2);
+      // Sağ kahkül
+      ctx.arc(player.x + player.width / 2 + 4, player.y - 2, 2.5, 0, Math.PI * 2);
+      ctx.arc(player.x + player.width / 2 + 6, player.y - 4, 3, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Gözler
+      const eyeHeight = player.isJumping ? 1 : 3;
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.ellipse(player.x + player.width / 2 - 4, player.y + 8, 2, eyeHeight, 0, 0, Math.PI * 2);
+      ctx.ellipse(player.x + player.width / 2 + 4, player.y + 8, 2, eyeHeight, 0, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Gülümseme
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(player.x + player.width / 2, player.y + 12, 5, 0.2, Math.PI - 0.2);
+      ctx.stroke();
+      
+      // Vücut
+      const bodyGradient = ctx.createLinearGradient(0, player.y + 15, 0, player.y + player.height);
+      bodyGradient.addColorStop(0, '#FF1493');
+      bodyGradient.addColorStop(1, '#C71585');
+      ctx.fillStyle = bodyGradient;
+      ctx.fillRect(player.x + 3, player.y + 18, player.width - 6, player.height - 20);
+      
+      // Bacaklar
+      ctx.fillStyle = '#FF1493';
+      const legOffset = player.walkTimer > 0 ? Math.sin(player.walkFrame) * 3 : 0;
+      ctx.fillRect(player.x + 6, player.y + player.height - 10 + legOffset, 8, 10);
+      ctx.fillRect(player.x + player.width - 14, player.y + player.height - 10 - legOffset, 8, 10);
+      
+      // Kollar
+      ctx.fillStyle = '#FFB6C1';
+      ctx.fillRect(player.x, player.y + 22, 6, 12);
+      ctx.fillRect(player.x + player.width - 6, player.y + 22, 6, 12);
+      
+      ctx.restore();
+      ctx.restore();
+
+      // UI - İlerleme çubuğu
+      const progress = collectedEnvelopes.length / memories.length;
+      const barWidth = 300;
+      const barHeight = 25;
+      const barX = 250;
+      const barY = 20;
+      
+      ctx.fillStyle = 'rgba(139, 71, 137, 0.3)';
+      ctx.fillRect(barX, barY, barWidth, barHeight);
+      
+      const progressGradient = ctx.createLinearGradient(barX, 0, barX + barWidth * progress, 0);
+      progressGradient.addColorStop(0, '#FF69B4');
+      progressGradient.addColorStop(1, '#FF1493');
+      ctx.fillStyle = progressGradient;
+      ctx.fillRect(barX, barY, barWidth * progress, barHeight);
+      
+      ctx.strokeStyle = '#8B4789';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(barX, barY, barWidth, barHeight);
+      
+      ctx.fillStyle = '#8B4789';
+      ctx.font = 'bold 16px "Segoe UI", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${collectedEnvelopes.length}/${memories.length} Anı`, barX + barWidth / 2, barY + 18);
+
+      // Skor
+      ctx.fillStyle = '#8B4789';
+      ctx.font = 'bold 22px "Segoe UI", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(`💕 ${score}`, 20, 35);
+      
+      // Konum
+      ctx.fillStyle = '#8B4789';
+      ctx.font = 'bold 16px "Segoe UI", sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(`${Math.floor(player.x)}m`, 780, 35);
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Oyunu başlat
+    gameLoop();
+  </script>
+</body>
+</html>
