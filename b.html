@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOĞUMGÜNÜNKUTLUOLSUNNN</title>
+<style>
+html, body {
+  margin:0; padding:0; overflow:hidden;
+  font-family:sans-serif;
+  background:#ff77bc;
+  color:white;
+  height:100vh;
+  
+  background-image: url("background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+#welcome {
+  position:absolute; top:0; left:0; width:100vw; height:100vh;
+  display:flex; justify-content:center; align-items:center; flex-direction:column;
+  text-align:center; background: rgba(10,22,37,0.9); z-index:10;
+  transition: opacity 0.7s ease;
+}
+#welcome h1 {font-size:50px;margin:0;}
+#welcome p {margin-top:20px;color:#ffeeee; animation:bounce 1.3s infinite;}
+@keyframes bounce {0%{transform:translateY(0);}50%{transform:translateY(6px);}100%{transform:translateY(0);}}
+
+#slides {
+  position:relative;
+  width:100vw; height:100vh;
+  overflow:hidden;
+}
+
+.slide {
+  position:absolute;
+  top:0; left:0;
+  width:100vw; height:100vh;
+  display:flex;
+  opacity:0;
+  transition: opacity 0.6s ease;
+}
+.slide.active { opacity:1; z-index:2; }
+
+.left {
+  width:50%;
+  background-size:contain;
+  background-repeat: no-repeat;
+  background-position:left;
+  filter:brightness(0.7);
+  position:relative;
+}
+.right {
+  width:50%;
+  display:flex; justify-content:center; align-items:center;
+  padding:50px;
+}
+.card {
+  background:#f7f9ff;
+  color:black;
+  padding:40px;
+  width:70%;
+  border-radius:22px;
+  box-shadow:0 10px 40px rgba(20,40,80,0.35);
+}
+
+.dots {
+  position:fixed; right:40px; top:50%; transform:translateY(-50%);
+  display:flex; flex-direction:column; gap:12px;
+}
+.dot {width:11px; height:11px; background:#ea9999; border-radius:50%; transition:.3s;}
+.dot.active {background:#f4cccc; transform:scale(1.3);}
+</style>
+</head>
+<body>
+
+<div id="welcome">
+  <h1>Doğum Günün Kutlu Olsun Sevgilim 💞</h1>
+  <p>Süprizin İçin Aşağı kaydır ↓</p>
+</div>
+
+<div id="slides"></div>
+<div class="dots" id="dots"></div>
+
+<script>
+const images = [
+  "elifsu.jpeg",
+  "aslı.jpeg",
+  "beren.jpeg",
+  "bilge.jpeg",
+  "berke.jpg",
+  "özgür.jpg",
+  "fatih.jpeg",
+  "melisa.jpeg",
+  "yusuf.jpeg",
+  "bizbizbiz.jpeg"
+];
+const texts = [
+  "Sayın Elif Naz Birim, Bu seninle geçirdiğimiz üçüncü doğum günü. Daha çok doğum günleri geçirmemizi dilerken bunun senin ve benim için en önemlisi olduğunu düşünüyorum. 18 oluyorsun, girl wtf. Elimde büyümüş gibisin. 18 olman beni kendi çocuğum reşit oluyormuş gibi duygulandırıyo ama neyseki artık beni evlatlık alabilirsin. Artık 18 oluyorsun, hayata ilk defa gözlerini açan bir bebek gibisin. Karşına yeni yerler, yeni insanlar, yeni zorluklar ve yanında mutluluklar çıkacak. Hayat sana hep gülecek biliyorum çünkü sen herşeye rağmen asla kahkahanı eksik etmedin, her şeye inat gülümsedin. Şunu bil ki ne olursa olsun her zaman her koşulda senin arkandayım. Her zaman bir telefon, bir mesaj uzağındayım. Hayat seni acıtır gibi olduğunda merhemin olarak buradayım. Lütfen bu yaşın içindeki çocuğu baskılamasına izin verme, ne yaşarsan yaşa, karşına nasıl engeller çıkarsa çıksın etrafına yaydığın güzel enerjiyi ve çocuksu neşeni terk etme. Sen hep bir rol modeldin önümde ve ben senin neşeni, ışığını, kahkahalarını, en çok da mükemmel kalbini örnek aldım. Ya her ilkim seninle oldu, her şeyi beraber yaptık hep birbirimize destek olduk beraber ağladık beraber güldük. Biraz da beraber büyüdük. Annemin sevdiği tek arkadaşım, benim tamamen güvenebildiğim tek kişi sensin. Bundan sonraki her doğum gününde yanında olmayı, bol bol kahkaha atmayı, binlerce macerayı seninle paylaşmayı ve mutluluğunun hiç azalmadan artmasını diliyorum. Benim için çok önemlisin, çok değerlisin. O kadar kötü ruhun içinde dünyaya verilmiş bir hediye gibisin. Önündeki uzun yolda ayağına hiç taş gelmesin, gözüne yaş uğramasın, her şey dilediğince gönlünce olsun. Seni cok seviyorum. Finally legal bitchh🎉🎉",
+  "Elifkusum Beraber vakit geçirmekten en keyif aldığım kişilerden birisin. Ne yapıyorsak yapalım, ne konuşuyorsak konuşalım kendimi yanında hep çok iyi hissediyorum. Safe place’imsin. Artık eskisi gibi her gün konuşup görüşmüyoruz. Seni görmek için birkaç kat aşağıya inmekten çok daha fazlasını yapmam gerekiyor maalesef. Ve seni çok özlüyorum. Ama ne kadar uzak olursak olalım tatlı kalbini hep hissediyorum. Seni çok seviyorum. İyi ki doğdun askim. İyi ki varsınn. Yeni yaşın çok çok güzel ve çok çok benimle geçsin ltfn.",
+  "İYİKİ DOĞDUN GÜZELLİKK legal olmamak seni durduramadı zaten ama artık gönül rahatlığıyla her yere gidebilirsin🥳🥳🥳doğum gününün aralığa denk gelmesi imrenilcek bi şey bence her şeye yeni yılla birlikte yeni yaşınla baştan başlayabilirsin Bu yıl hiçç görmediğin bi tarafının kilidi açılır umarım Seni çook seviyorum yıllar geçse de sen hep ilk tanıştığımızda olduğun gibi neşeli cıvıl cıvıl ve eğlenceli kal elom💗💗yeni yaşın kutlu olsunn",
+  "eliff doğum günün kutlu olsunn seni çok çok seviyoruum. tanıştığımız günden beri hep çok iyi bi arkadaş ve müthiş bi insan oldun. seninle yaptığımız her şey o kadarr güzeldi ki benim için. edindiğimiz birr sürü anı konuştuğumuz onca şey kalbimde hep kocaman bir yer kaplıycakk. 18 mi oldun sen şimdi🥹🥹. iyi ki tanışmışız, arkadaş olmuşuz, lisede beraber büyümüşüz🫶🏻🫶🏻. umarım her yaşında bu kadar neşeli, eğlenceli ve hayat dolu kalırsınn. 💞💞",
+  "Bazen bir fok balığı kadar şaşkın🦭, bazen dünyanın en tatlı insanı... Her halinle iyi ki arkadaşımsın. Birlikte saçmaladığımız nice senelere! 🥳",
+  "eloo doğum günü kutlu olsun canom🥳🥳 sonunda 18 oldun abisinin gülü😂😂 4 senedir arkadaşım olduğun için çok şanslıyım. mutluluğumuzda, heyecanımızda, üzüntümüzde hep birbirimizin yanında olduk. iyi ki kanksım olmuşsun bu lise sensiz geçmezdi valla. iyi ki varsın, tekrardan iyi ki doğmuşsun. he biralar artık senden bu arada🥰🥰",
+  "Elif gerçekten bu hayatta tanıdığım nadir süper insanlardan birisin iyi ki doğdun iyi ki 11 ken o tramisuyu yaptın ve iyi ki mistik otistik konseyi sayesinde daha da samimileştik bu hayatta en çok  bağımın kopmasını istemediğim insanlardansın bana her zaman destek olduğun için teşekkür ederim iyi ki doğdun nice mutlu yıllara nice bizli mutlu yıllara umarım iyi ki varsın doğum günün kutlu olsunnn",
+  "OMRUMMMMM dogum gunun kutlu olsun😭😭😭😭😭😭😭😭😭seni cooooooooook seviyorum VE COK OZLEDIM sira arkadasi oldugumuz zamanlari ozlicegimi biliyordum aptal karpuz oyununu bile ozledim😭😭sonunda 18 oldun bebe seni artik partilerden kovulmicaksin👏🏿👏🏿iyiki iyiki iyiki varsin askim 💜💜💜🥹🥹",
+  "elifnaaaz dogum gunun kutlu olsun kankaaa🎉🎉🎉🥳🥳🥳🥳 kanka öncelikle gercekten super bi iki yil icin tesekkur ederim yani soyle soyliyim ozellikle ilk tanıstıgımız sene her gun her oglen arası o tokide oturdugumuz gunlerı asla unutmam yani. ya simdi yoksun belki ama muhabbetlerin hala ordalar bil bunu tokide ruhun geziyor senin lekflelflefld kanka bide gercekten ne kadar anlarsin bilmiyom ama senin adina o kadar mutluyumki ve bi o kadar baska kandan olsak veya su sıralar sık konusmasak bile seninle inanılmaz gurur duyuyorum bunu bilemezsin o derece. kanka bide foto baya old ve safe hissettirdi o yuzden bunu sectim kesin gorunce anira anira gulceksın suraya yazıyom bak ⬅️ ya aga sen az cok biliyon senin icin ne kadar sevindigimi o yuzden cok bisey yazmıcam özletiyon bide kanka arada ugra amk seviyoz seni KENDINE COK DIKKAT ET ✌🏻✌🏻✌🏻✌🏻😏😏😏😏🫶🏻🫶🏻🫶🏻",
+  "Biricik sevgilim doğum günün kutlu olsun, Tanıştığımız ilk günden beri seninle geçen her günüm bir diğerinden daha da güzel oluyor, sana her baktığımda daha güzel tatlı zeki ve sempatik olmayı nasıl başarıyorsun bilmiyorum. İyi ki varsın bitanem seni çok seviyorum. Senin her bir şeyine aşığım iyi ki varsın. Birlikte mutlu ve uzun yıllar geçiririz umarım. Doğum günün kutlu olsun🥹"
+];
+
+let current = -1; 
+let canScroll = true;
+
+const slidesContainer = document.getElementById("slides");
+const dotsContainer = document.getElementById("dots");
+const welcome = document.getElementById("welcome");
+
+// Slaytları oluştur
+images.forEach((img,i)=>{
+  const slide = document.createElement("div");
+  slide.className="slide";
+  slide.innerHTML = `<div class="left" style="background-image:url('${img}')"></div>
+                     <div class="right"><div class="card">${texts[i]}</div></div>`;
+  slidesContainer.appendChild(slide);
+
+  const dot = document.createElement("div");
+  dot.className="dot";
+  dotsContainer.appendChild(dot);
+});
+
+const slides=document.querySelectorAll(".slide");
+const dots=document.querySelectorAll(".dot");
+
+// Aktif slide fonksiyonu
+function activateSlide(index){
+  slides.forEach((s,i)=>{
+    if(i===index) s.classList.add("active");
+    else s.classList.remove("active");
+  });
+  dots.forEach((d,i)=>{
+    if(i===index) d.classList.add("active");
+    else d.classList.remove("active");
+  });
+}
+
+// Scroll event
+window.addEventListener("wheel",(e)=>{
+  if(!canScroll) return;
+  canScroll=false;
+
+  if(current===-1 && e.deltaY>0){
+    welcome.style.opacity=0;
+    setTimeout(()=>welcome.style.display="none",600);
+    current=0;
+    activateSlide(0);
+  } else if(current>=0){
+    if(e.deltaY>0 && current<slides.length-1) current++;
+    else if(e.deltaY<0 && current>0) current--;
+    activateSlide(current);
+  }
+
+  setTimeout(()=>canScroll=true,700);
+});
+// Aşşağı Yukarı Tuşları
+window.addEventListener("keydown", (e) => {
+  if (!canScroll) return;
+
+  if (current === -1 && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+    welcome.style.opacity = 0;
+    setTimeout(() => welcome.style.display = "none", 600);
+    current = 0;
+    activateSlide(0);
+    return;
+  }
+
+  if (e.key === "ArrowDown" && current < slides.length - 1) {
+    canScroll = false;
+    current++;
+    activateSlide(current);
+  }
+
+  if (e.key === "ArrowUp" && current > 0) {
+    canScroll = false;
+    current--;
+    activateSlide(current);
+  }
+
+  setTimeout(() => canScroll = true, 700);
+}); 
+</script>
+
+</body>
+</html>
