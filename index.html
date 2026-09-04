@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Benimle çıkar mısın?</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #fff;
+      color: #000;
+      overflow: hidden;
+    }
+
+    .screen {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .content {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      padding: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 700;
+    }
+
+    .buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      min-height: 70px;
+    }
+
+    button {
+      border: 2px solid #000;
+      background: #000;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 14px 28px;
+      min-width: 130px;
+      cursor: pointer;
+      transition: transform 0.35s ease, font-size 0.35s ease,
+                  padding 0.35s ease, opacity 0.25s ease;
+    }
+
+    button:hover {
+      background: #222;
+    }
+
+    #yes {
+      transform-origin: center;
+    }
+
+    .think {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      font-size: clamp(34px, 7vw, 76px);
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .think.show {
+      animation: flash 1.2s ease forwards;
+    }
+
+    @keyframes flash {
+      0% { opacity: 0; }
+      18% { opacity: 1; }
+      72% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .hidden {
+      visibility: hidden;
+    }
+
+    @media (max-width: 600px) {
+      .buttons {
+        gap: 10px;
+      }
+
+      button {
+        min-width: 110px;
+        padding: 12px 20px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="screen">
+    <section class="content" id="mainContent">
+      <h1>Benimle çıkar mısın?</h1>
+
+      <div class="buttons">
+        <button id="yes">EVET</button>
+        <button id="no">HAYIR</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="think" id="think">TEKRAR DÜŞÜN</div>
+
+  <script>
+    const yes = document.getElementById("yes");
+    const no = document.getElementById("no");
+    const think = document.getElementById("think");
+    const mainContent = document.getElementById("mainContent");
+
+    let scale = 1;
+
+    no.addEventListener("click", () => {
+      // EVET butonunu her HAYIR tıklamasında 2 katına çıkar.
+      scale *= 2;
+      yes.style.transform = `scale(${scale})`;
+
+      // HAYIR'a tekrar basılmasını geçici olarak engelle.
+      no.disabled = true;
+
+      // "TEKRAR DÜŞÜN" ekranını göster.
+      think.classList.remove("show");
+      void think.offsetWidth;
+      think.classList.add("show");
+
+      // Mesaj kaybolduktan sonra ana ekran geri gelsin.
+      setTimeout(() => {
+        no.disabled = false;
+      }, 1200);
+    });
+
+    yes.addEventListener("click", () => {
+      document.body.innerHTML = `
+        <main class="screen">
+          <div class="content">
+            <h1>YYESSSSSSSSSSSBEEEEEEEEEEEE</h1>
+          </div>
+        </main>
+      `;
+    });
+  </script>
+</body>
+</html>
